@@ -1,0 +1,4 @@
+/* App-level styles live inline in App.tsx for this MVP. */
+#root {
+  width: 100%;
+}

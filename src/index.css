@@ -1,0 +1,103 @@
+:root {
+  font-family: "Sora", "Avenir Next", "Segoe UI", system-ui, sans-serif;
+  line-height: 1.5;
+  font-weight: 400;
+  color: #0b1d3a;
+  background-color: #edf3f8;
+  font-synthesis: none;
+  text-rendering: optimizeLegibility;
+  -webkit-font-smoothing: antialiased;
+  -moz-osx-font-smoothing: grayscale;
+
+  --surface: #ffffff;
+  --surface-2: #f7fbff;
+  --border: #e6edf5;
+  --text: #0b1d3a;
+  --text-muted: rgba(11, 29, 58, 0.65);
+  --brand: #0b1d3a;
+  --brand-2: #2c7be5;
+  --accent: #ffb703;
+}
+
+*,
+*::before,
+*::after {
+  box-sizing: border-box;
+}
+
+body {
+  margin: 0;
+  min-width: 320px;
+  min-height: 100vh;
+  background:
+    radial-gradient(900px 500px at 10% -10%, #d7ecff 0%, transparent 60%),
+    radial-gradient(900px 500px at 95% 0%, #e9f4ff 0%, transparent 65%),
+    linear-gradient(180deg, #edf3f8 0%, #f6f9fc 100%);
+  color: var(--text);
+}
+
+#root {
+  min-height: 100vh;
+}
+
+a {
+  color: var(--brand-2);
+  text-decoration: none;
+}
+a:hover {
+  text-decoration: underline;
+}
+
+h1,
+h2,
+h3,
+h4,
+h5 {
+  margin: 0;
+  letter-spacing: -0.02em;
+}
+
+button,
+input,
+select,
+textarea {
+  font: inherit;
+}
+
+button {
+  border-radius: 10px;
+  border: 1px solid transparent;
+  padding: 10px 14px;
+  font-weight: 600;
+  background: var(--brand);
+  color: #fff;
+  cursor: pointer;
+  transition: transform 120ms ease, box-shadow 120ms ease;
+}
+button:hover {
+  transform: translateY(-1px);
+  box-shadow: 0 8px 18px rgba(9, 30, 66, 0.18);
+}
+button:disabled {
+  opacity: 0.6;
+  cursor: not-allowed;
+  box-shadow: none;
+  transform: none;
+}
+
+input,
+select,
+textarea {
+  padding: 8px 10px;
+  border-radius: 10px;
+  border: 1px solid var(--border);
+  background: var(--surface);
+  color: var(--text);
+}
+input:focus,
+select:focus,
+textarea:focus {
+  outline: none;
+  border-color: var(--brand-2);
+  box-shadow: 0 0 0 3px rgba(44, 123, 229, 0.15);
+}
