@@ -7,4 +7,11 @@ export default defineConfig({
   optimizeDeps: {
     exclude: ["@ffmpeg/ffmpeg", "@ffmpeg/util"],
   },
+  test: {
+    environment: "jsdom",
+    setupFiles: "./src/setupTests.ts",
+    globals: true,
+    include: ["src/**/*.{test,spec}.{ts,tsx}"],
+    exclude: ["node_modules/**", "e2e/**", "playwright.config.ts"],
+  },
 });

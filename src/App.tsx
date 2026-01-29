@@ -51,10 +51,12 @@ export default function App() {
 
     initRef.current = (async () => {
       try {
-        const ffmpeg = new FFmpeg();
+        const FFmpegCtor =
+          (globalThis as any).__FFMPEG_MOCK__ ?? FFmpeg;
+        const ffmpeg = new FFmpegCtor();
         ffmpegRef.current = ffmpeg;
 
-        ffmpeg.on("log", ({ message }) => {
+        ffmpeg.on("log", ({ message }: { message: string }) => {
           setLog((prev) => (prev + message + "\n").slice(-8000));
         });
 
@@ -78,12 +80,14 @@ export default function App() {
         setStatusText("Loading FFmpeg core...");
         const baseURL =
           "https://cdn.jsdelivr.net/npm/@ffmpeg/core@0.12.10/dist/esm";
+        const toBlobURLFn =
+          (globalThis as any).__FFMPEG_TO_BLOB_URL__ ?? toBlobURL;
         await ffmpeg.load({
-          coreURL: await toBlobURL(
+          coreURL: await toBlobURLFn(
             `${baseURL}/ffmpeg-core.js`,
             "text/javascript",
           ),
-          wasmURL: await toBlobURL(
+          wasmURL: await toBlobURLFn(
             `${baseURL}/ffmpeg-core.wasm`,
             "application/wasm",
           ),
@@ -139,7 +143,22 @@ export default function App() {
   }, [loading]);
 
   const compressCoverImage = async (file: File) => {
-    const img = await createImageBitmap(file);
+    const loadImageElement = async (blob: Blob) => {
+      const url = URL.createObjectURL(blob);
+      try {
+        const img = new Image();
+        img.src = url;
+        await img.decode();
+        return img;
+      } finally {
+        URL.revokeObjectURL(url);
+      }
+    };
+
+    const img =
+      typeof createImageBitmap === "function"
+        ? await createImageBitmap(file)
+        : await loadImageElement(file);
     const maxSize = 1024;
     const scale = Math.min(1, maxSize / Math.max(img.width, img.height));
     const width = Math.max(1, Math.round(img.width * scale));
@@ -195,8 +214,10 @@ export default function App() {
         `Ready (${Math.round(blob.size / 1024)} KB, JPEG)`,
       );
     } catch (err) {
-      setCoverBlob(null);
-      setCoverStatus("Failed to optimise cover.");
+      if (coverUrl) URL.revokeObjectURL(coverUrl);
+      setCoverBlob(file);
+      setCoverUrl(URL.createObjectURL(file));
+      setCoverStatus("Using original image (optimisation failed).");
       console.error(err);
     }
   };
@@ -393,6 +414,8 @@ export default function App() {
 
       // 1) Write input files to FFmpeg FS
       const inputNames: string[] = [];
+      const fetchFileFn =
+        (globalThis as any).__FFMPEG_FETCH_FILE__ ?? fetchFile;
       for (let i = 0; i < files.length; i++) {
         const f = files[i];
         const ext = f.name.split(".").pop()?.toLowerCase();
@@ -404,7 +427,7 @@ export default function App() {
               : "mp4";
         const name = `input_${String(i).padStart(2, "0")}.${safeExt}`;
         inputNames.push(name);
-        await ffmpeg.writeFile(name, await fetchFile(f));
+        await ffmpeg.writeFile(name, await fetchFileFn(f));
       }
 
       const outExt = mediaType === "audio" ? "mp3" : "mp4";
@@ -565,7 +588,7 @@ export default function App() {
       let finalOutFile = outFile;
       if (mediaType === "audio" && coverBlob) {
         setStatusText("Embedding cover art...");
-        await ffmpeg.writeFile("cover.jpg", await fetchFile(coverBlob));
+        await ffmpeg.writeFile("cover.jpg", await fetchFileFn(coverBlob));
         const outWithCover = "output_with_cover.mp3";
         await ffmpeg.exec([
           "-i",

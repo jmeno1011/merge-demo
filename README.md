@@ -31,6 +31,12 @@ npm install
 npm run dev
 ```
 
+## CI memo (optional)
+- TODO: If you enable Playwright in CI later, run:
+  - `npx playwright install --with-deps`
+  - `npm run test:e2e`
+- TODO: Ensure `playwright-report/` and `test-results/` remain ignored (see `.gitignore`).
+
 ## Notes / limitations
 - Large files can be slow or run out of memory in the browser.
 - MP4/MOV may fail with `-c copy` when codecs/resolution/frame rates differ;
