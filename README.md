@@ -10,6 +10,10 @@ ffmpeg.wasm (@ffmpeg/ffmpeg). It runs fully in the client with no server.
 - Progress/status/log output
 - Download merged result
 - Reset to clear state
+- File preview (audio/video)
+- Trim per file (start/end) and fade in/out
+- Output preview after merge
+- Optional MP3 cover art (auto-optimised to ~1 MB)
 
 ## Supported formats
 - Audio: MP3, M4A, WAV
@@ -37,4 +41,3 @@ npm run dev
 - Server-side merging for large files
 - Batch queues
 - Optional format conversion
-
