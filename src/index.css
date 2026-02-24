@@ -72,7 +72,9 @@ button {
   background: var(--brand);
   color: #fff;
   cursor: pointer;
-  transition: transform 120ms ease, box-shadow 120ms ease;
+  transition:
+    transform 120ms ease,
+    box-shadow 120ms ease;
 }
 button:hover {
   transform: translateY(-1px);
@@ -100,4 +102,8 @@ textarea:focus {
   outline: none;
   border-color: var(--brand-2);
   box-shadow: 0 0 0 3px rgba(44, 123, 229, 0.15);
+}
+
+#root {
+  width: 100%;
 }
