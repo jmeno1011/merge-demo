@@ -12,6 +12,7 @@ import FileList from "./components/FileList";
 import LogPanel from "./components/LogPanel";
 import OutputPreview from "./components/OutputPreview";
 import CoverArtCard from "./components/CoverArtCard";
+import { Footer } from "./components/Footer/Footer";
 
 type FFmpegProgressEvent = { ratio?: number };
 
@@ -51,8 +52,7 @@ export default function App() {
 
     initRef.current = (async () => {
       try {
-        const FFmpegCtor =
-          (globalThis as any).__FFMPEG_MOCK__ ?? FFmpeg;
+        const FFmpegCtor = (globalThis as any).__FFMPEG_MOCK__ ?? FFmpeg;
         const ffmpeg = new FFmpegCtor();
         ffmpegRef.current = ffmpeg;
 
@@ -210,9 +210,7 @@ export default function App() {
       if (coverUrl) URL.revokeObjectURL(coverUrl);
       setCoverBlob(blob);
       setCoverUrl(URL.createObjectURL(blob));
-      setCoverStatus(
-        `Ready (${Math.round(blob.size / 1024)} KB, JPEG)`,
-      );
+      setCoverStatus(`Ready (${Math.round(blob.size / 1024)} KB, JPEG)`);
     } catch (err) {
       if (coverUrl) URL.revokeObjectURL(coverUrl);
       setCoverBlob(file);
@@ -311,10 +309,7 @@ export default function App() {
     });
   };
 
-  const updateFileSetting = (
-    index: number,
-    patch: Partial<FileSetting>,
-  ) => {
+  const updateFileSetting = (index: number, patch: Partial<FileSetting>) => {
     setFileSettings((prev) => {
       const next = [...prev];
       next[index] = { ...next[index], ...patch };
@@ -674,88 +669,91 @@ export default function App() {
   const isMergeDisabled = loading || files.length < 2;
 
   return (
-    <div
-      style={{
-        maxWidth: 900,
-        margin: "32px auto 64px",
-        padding: 16,
-        fontFamily:
-          "ui-sans-serif, system-ui, -apple-system, BlinkMacSystemFont",
-      }}
-    >
-      <HeaderCard />
+    <>
+      <div
+        style={{
+          maxWidth: 900,
+          margin: "32px auto 64px",
+          padding: 16,
+          fontFamily:
+            "ui-sans-serif, system-ui, -apple-system, BlinkMacSystemFont",
+        }}
+      >
+        <HeaderCard />
 
-      <ControlsPanel
-        mediaType={mediaType}
-        setMediaType={setMediaType}
-        outputName={outputName}
-        setOutputName={setOutputName}
-        mergeMode={mergeMode}
-        setMergeMode={setMergeMode}
-        ready={ready}
-        loading={loading}
-      />
-
-      <CoverArtCard
-        enabled={mediaType === "audio"}
-        loading={loading}
-        coverUrl={coverUrl}
-        onPickCover={onPickCover}
-        onClearCover={clearCover}
-        statusText={coverStatus}
-      />
-
-      <MergeSection>
-        <UploadCard
+        <ControlsPanel
           mediaType={mediaType}
-          accept={accept}
+          setMediaType={setMediaType}
+          outputName={outputName}
+          setOutputName={setOutputName}
+          mergeMode={mergeMode}
+          setMergeMode={setMergeMode}
+          ready={ready}
           loading={loading}
-          onPickFiles={onPickFiles}
-          onDropFiles={onDropFiles}
-          inputKey={inputKey}
         />
-        <ActionBar
-          loading={loading}
-          filesCount={files.length}
-          onMerge={handleMergeClick}
-          onReset={resetAll}
-          downloadUrl={downloadUrl}
-          downloadFileName={downloadFileName}
-          progress={progress}
-          statusText={statusText}
-          elapsedMs={elapsedMs}
-        />
-        <OutputPreview url={downloadUrl} mediaType={mediaType} />
-        <div
-          style={{
-            marginTop: 12,
-            padding: "10px 12px",
-            borderRadius: 10,
-            border: "1px solid #e6edf5",
-            background: "#f7fbff",
-            fontSize: 12,
-            color: "#274060",
-          }}
-        >
-          Status: ready={String(ready)} · loading={String(loading)} · files=
-          {files.length} · mergeMode={mergeMode} · disabled=
-          {String(isMergeDisabled)}
-          <br />
-          Last click: {lastClickAt || "-"} (total {clickCount})
-        </div>
-        <ErrorBanner error={error} />
-      </MergeSection>
 
-      <FileList
-        files={files}
-        settings={fileSettings}
-        mediaType={mediaType}
-        loading={loading}
-        onMove={moveFile}
-        onRemove={removeFile}
-        onUpdateSetting={updateFileSetting}
-      />
-      <LogPanel log={log} />
-    </div>
+        <CoverArtCard
+          enabled={mediaType === "audio"}
+          loading={loading}
+          coverUrl={coverUrl}
+          onPickCover={onPickCover}
+          onClearCover={clearCover}
+          statusText={coverStatus}
+        />
+
+        <MergeSection>
+          <UploadCard
+            mediaType={mediaType}
+            accept={accept}
+            loading={loading}
+            onPickFiles={onPickFiles}
+            onDropFiles={onDropFiles}
+            inputKey={inputKey}
+          />
+          <ActionBar
+            loading={loading}
+            filesCount={files.length}
+            onMerge={handleMergeClick}
+            onReset={resetAll}
+            downloadUrl={downloadUrl}
+            downloadFileName={downloadFileName}
+            progress={progress}
+            statusText={statusText}
+            elapsedMs={elapsedMs}
+          />
+          <OutputPreview url={downloadUrl} mediaType={mediaType} />
+          <div
+            style={{
+              marginTop: 12,
+              padding: "10px 12px",
+              borderRadius: 10,
+              border: "1px solid #e6edf5",
+              background: "#f7fbff",
+              fontSize: 12,
+              color: "#274060",
+            }}
+          >
+            Status: ready={String(ready)} · loading={String(loading)} · files=
+            {files.length} · mergeMode={mergeMode} · disabled=
+            {String(isMergeDisabled)}
+            <br />
+            Last click: {lastClickAt || "-"} (total {clickCount})
+          </div>
+          <ErrorBanner error={error} />
+        </MergeSection>
+
+        <FileList
+          files={files}
+          settings={fileSettings}
+          mediaType={mediaType}
+          loading={loading}
+          onMove={moveFile}
+          onRemove={removeFile}
+          onUpdateSetting={updateFileSetting}
+        />
+        <LogPanel log={log} />
+      </div>
+      <Footer />
+    </>
   );
 }
